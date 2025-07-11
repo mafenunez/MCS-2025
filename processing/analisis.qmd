@@ -1,0 +1,343 @@
+---
+title: "Justicia de mercado en la eduación: un estudio de las preferencias distributivas en Chile"
+author: María Fernanda Núñez y Tomás Urzúa
+bibliography: "../input/bib/bib-metodos.bib"
+format: pdf
+editor: visual
+lang: es
+---
+
+```{r}
+#| echo: false
+#| label: data
+pacman::p_load(tidyverse, sjPlot, summarytools,tidyr,
+               dplyr,
+               sjPlot,
+               sjmisc,
+               psych,
+               texreg,
+               haven,
+               ggplot2,
+               lmtest,
+               DescTools)
+
+options(scipen = 999)
+
+load("../output/proc_data.RData")
+```
+
+## Formulación del problema
+
+Desde la instalación del modelo neoliberal en Chile, este país ha presenciado múltiples transformaciones de carácter estructural, la mayoría pauteadas por las lógicas de mercado que subyacen el modelo gestado e implementado por los Chicago Boys durante la dictadura militar. En este contexto, el sistema educacional chileno fue protagonista de la instauración progresiva de un régimen mercantil que, con el paso del tiempo, ha integrado las dinámicas de libre oferta y demanda como elementos constituyentes de su funcionamiento [@corvalan_mercado_2016]. Esto ha conllevado a la consolidación de un sistema educacional caracterizado por una alta estratificación socioeconómica.
+
+Las disparidades económicas han marcado profundamente la tónica general en Chile, donde el 50% más pobre recibe solamente el 10% de los ingresos totales, mientras que el 1% más rico recibe casi el 27% de los ingresos del país [@chancel_world_2022]. Por su parte, la educación se inscribe en una realidad donde, en gran medida, los establecimientos educacionales con mejores indicadores académicos y mejores climas escolares son justamente aquellos que exigen un mayor poder adquisitivo. Al respecto, entran en tensión las posturas que defienden la educación como el principal motor de generación de oportunidades y movilidad social [@collins_sociedad_1989], en contra de aquellas que señalan las escuelas como meros sistemas de reproducción social que perpetúan las desigualdades de base de los jóvenes [@bourdieu_herederos_2009]. Estas desigualdades económicas tienen gran incidencia en la conformación de creencias en torno a la legitimación de estas desigualdades, así como en las ideas de justicia social de los individuos en torno a la distribución de bienes. En este contexto, la justicia de mercado, entendida como la adhesión de los individuos a la idea del merecimiento de bienes y servicios (como educación, salud y/o pensiones) en función de su capacidad de pago [@castillo_socialization_2024], es sumamente importante para comprender las preferencias distributivas que poseen las y los chilenos. Así, se considera fundamental generar conocimiento empírico que considere las preferencias distributivas en la educación como un fenómeno social relevante en un contexto de mercado en la sociedad chilena.
+
+Con el objetivo de contribuir en una agenda investigativa vinculada a educación y principios de justicia, el presente estudio tiene como objetivo explorar los factores que influyen en las preferencias distributivas de adultos sobre educación en Chile. Para ello, en un primer momento se realizarán análisis descriptivos de las variables a utilizar, prosiguiendo con la estimación de correlaciones entre ellas, con tal de dar cuenta la existencia de asociaciones significativas. Por último, se estimarán regresiones múltiples para comprobar si las variables utilizadas inciden en la predicción de la justicia distributiva en educación.
+
+**AGREGAR PREGUNTA DE INVESTIGACION**
+
+## Base de datos
+
+Para cumplir con el objetivo propuesto, se utilizará la base de datos de 2022 del Estudio Longitudinal Social de Chile (ELSOC). Este proyecto logra ver la luz gracias al Centro de Estudios de Conflicto y Cohesión Social (COES), siendo un estudio que busca medir las percepciones, preferencias y comportamientos de las y los chilenos en torno a temáticas de conflicto y cohesión social del país. Una de las virtudes de el ELSOC es que proporciona datos panel, es decir, la recopilación de datos anualmente a una muestra representativa de la población durante diez años, lo cual permite aplicar análisis intertemporales. La población objetivo del estudio son hombres y mujeres entre 18 y 75 años, residentes de viviendas particulares en zonas urbanas. El procedimiento muestral es probabilístico, estratificado, por conglomerados y multietápico. El tamaño de la muestra es de N = 2726.
+
+Las variables de este trabajo se hallan contenidas dentro de tres módulos: Módulo de Legitimidad y desigualdad social (d), Módulo de territorio (t) y Módulo de Caracterización Sociodemográfica (m). Esta selección busca medir la relación entre la justicia distributiva en educación y variables económicas objetivas, subjetivas, demográficas y percepciones del barrio.
+
+**AGREGAR N CON LAS MODIFICACIONES**
+
+## Variables
+
+### Variable dependiente
+
+```{r}
+#| echo: false
+proc_data %>%
+  count(just_educacion) %>% rename("Preferencia por justicia de mercado en la educación" = just_educacion) %>%
+  mutate("%" = round(n / sum(n) * 100, 1)) %>%
+  knitr::kable(caption = "Frecuencia Preferencia de justicia de mercado en la educación")
+```
+
+Esta variable ordinal busca medir el grado de acuerdo de una persona sobre la sentencia "Es justo que las personas de altos ingresos tengan una mejor educación para sus hijos que las personas con ingresos más bajos". La escala de acuerdo contiene cinco categorías de respuesta, las cuales van desde "Totalmente en desacuerdo" (1) hasta "Totalmente de acuerdo" (5).
+
+### Variables independientes
+
+```{r}
+#| echo: false
+
+proc_data %>%
+  select("Remuneración justa" =remuneracion_justa, "Ingreso Total del hogar" = ingreso_hogar,"Estatus Social Subjetivo" = estatus_subj) %>%  summary() %>%  knitr::kable(caption = "Descriptivos variables cuantitativas")
+
+```
+
+Remuneración justa (m15): Es una variable de carácter numérica que busca saber cuál es la remuneración (en ingresos líquidos) que el entrevistado consideraría justa. El fraseo de la pregunta dice "¿Cuánto cree que sería una remuneración justa para usted? (Considere el ingreso líquido, es decir, después de descuentos de impuestos, salud, previsión u otros)". No posee categorías de respuesta pues es una pregunta numérica abierta.
+
+Ingreso total (m29): La variable busca medir cuánto fue el ingreso total del hogar del entrevistado durante el último mes, considerando los ingresos líquidos de todos los miembros del hogar. El fraseo de la pregunta es "En el mes pasado, ¿cuál fue el ingreso total de su hogar? (Considere los ingresos líquidos de los miembros del hogar, es decir, después de descuentos de impuestos, salud, previsión u otros)". Posee respuesta numérica abierta
+
+Estatus social subjetivo (d01_01): Variable de tipo ordinal que busca saber en qué posición social se ubica el encuestado. El fraseo de la pregunta dice "En nuestra sociedad, hay grupos que tienden a ubicarse en los niveles más altos y grupos que tienden a ubicarse en los niveles más bajos de la sociedad. Usando la escala presentada, donde 0 es el nivel más bajo y 10 el nivel más alto, ¿Dónde se ubicaría usted en la sociedad chilena?". Como se lee en el fraseo, la variable posee once categorías de respuesta, donde mientras más alto el número, más alto se posiciona socialmente la persona desde su autopercepción.
+
+```{r}
+#| echo: false
+proc_data %>%
+  count(genero) %>% rename("Género" = genero) %>%
+  mutate("%" = round(n / sum(n) * 100, 1)) %>%
+  knitr::kable(caption = "Frecuencia Género")
+```
+
+Variable de carácter nominal que busca saber el sexo del encuestado. Hombre tiene la categoría de respuesta 1, mientras que Mujer la 2.
+
+```{r}
+#| echo: false
+proc_data %>%
+  count(cercania_escuelas) %>% rename("Satisfacción proximidad de las escuelas" = cercania_escuelas) %>%
+  mutate("%" = round(n / sum(n) * 100, 1)) %>%
+  knitr::kable(caption = "Frecuencia Satisfacción proximidad de las escuelas")
+```
+
+Variable de tipo ordinal que pretende medir el grado de satisfacción del encuestado con colegios, escuelas o liceos de buena calidad cercanos a su hogar. El fraseo de la pregunta es "Utilizando la siguiente escala, ¿cuán satisfecho o insatisfecho está usted con el BARRIO dónde reside en cuanto a proximidad a colegios, escuelas o liceos de buena calidad". Contiene cinco categorías de respuesta, las cuales van desde "Totalmente insatisfecho" (1) hasta "Totalmente satisfecho" (5).
+
+## Correlaciones
+
+Dado que las variables de interés son ordinales, cuantitativas y dicotomicas, es que se aplicarán correlaciones policóricas, de pearson y una tabla de contingencia según corresponda para estimar su asociación.
+
+### a. Tabla de contingencia: Justicia de mercado en la educación y género
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+tabla <- prop.table(table(proc_data$just_educacion, proc_data$genero))*100
+
+tabla_df <- as.data.frame.matrix(tabla)
+
+tabla_df <- tibble::rownames_to_column(tabla_df, var = "Preferencias")
+
+
+kableExtra::kbl(tabla_df, caption = "Tabla de Contingencia: Género por Preferencia", booktabs = TRUE, align = "c") %>%
+  kableExtra::kable_styling(latex_options = c("striped", "hold_position"), font_size = 10) %>%
+  kableExtra::column_spec(1, bold = TRUE) %>%
+  kableExtra::add_header_above(c(" " = 1, "Género" = 2))
+
+
+```
+
+```{r}
+#| echo: false
+#| results: hide
+
+chi_results <- chisq.test(table(proc_data$just_educacion, proc_data$genero))
+
+tabla <- table(proc_data$just_educacion, proc_data$genero)
+#calcular v de cramer 
+chi2 <- chi_results$statistic
+n <- sum(tabla)
+k <- min(dim(tabla))
+v_cramer <- sqrt(chi2 / (n * (k - 1)))
+```
+
+La tabla de contingencia nos muestra que las mujeres tienden a estar más en desacuerdo (33% en desacuerdo y 17% muy en desacuerdo) con preferir la justicia de mercado en la eduación que los hombres. En esta asociación, el chi cuadrado es significativo (p-value = 0.002) y presenta un tamaño efecto bajo (V de Cramer =0.07).
+
+### b. Correlación Policórica: Justicia de mercado en la educación y proximidad a escuelas en el barrio
+
+```{r}
+#| echo: false
+#| warning: false
+
+matriz <- proc_data %>% select(just_educacion, cercania_escuelas) %>% mutate_all(~(as.numeric(.)))  
+
+cor_matrix <- psych::polychoric(matriz, na.rm = T)
+
+knitr::kable(round(cor_matrix$rho, 2), caption = "Preferencias por justicia de mercado en la educación y proximidad a escuelas en el barrio")
+
+
+```
+
+```{r}
+#| echo: false
+#| results: hide
+
+
+
+cor.test(matriz$just_educacion, matriz$cercania_escuelas, method = "spearman")
+
+0.01^2*100
+```
+
+La correlación policorica indica un relación baja y positiva, de modo que a mayor preferencia por justicia de mercado mayor satisfacción presentan las personas al tener mayor proximidad a escuelas en su barrio. Sin embargo esta relación no es significativa (p-value = 0.3) y comparten muy baja varianza (0.01%).
+
+### c. Correlaciones de Pearson: estatus social subjetivo, remuneración justa, ingreso total de los hogares y
+
+```{r}
+#| echo: false
+matriz <- proc_data %>% select(just_educacion, remuneracion_justa, ingreso_hogar, estatus_subj, genero) %>% mutate_all(~(as.numeric(.))) 
+
+sjPlot::tab_corr(matriz, 
+                 triangle = "lower")
+```
+
+```{r}
+#| echo: false
+#| results: hide
+
+p <- proc_data %>% select(just_educacion, estatus_subj) %>% mutate_all(~(as.numeric(.)))  
+
+cor.test(p$just_educacion, p$estatus_subj, method = "pearson")
+
+0.0007^2*100
+```
+
+La correlación de Pearson indica un relación baja y positiva, de modo que a mayor preferencia por justicia de mercado perciben tener un mayor estatus en la sociedad chilena. Sin embargo esta relación no es significativa (p-value = 0.9) y comparten muy baja varianza (0.000049%).
+
+```{r}
+#| echo: false
+#| results: hide
+
+p <- proc_data %>% select(just_educacion, remuneracion_justa) %>% mutate_all(~(as.numeric(.))) 
+
+cor.test(p$just_educacion, p$remuneracion_justa, method = "pearson")
+
+-0.01^2
+
+0.0001*100
+
+```
+
+La correlación de Pearson indica un relación baja y negativa, de modo que a mayor preferencia por justicia de mercado perciben un menor monto de remuneración justa. Sin embargo esta relación no es significativa (p-value = 0.6) y comparten muy baja varianza (0.01%).
+
+```{r}
+#| echo: false
+#| results: hide
+
+p <- proc_data %>% select(just_educacion, ingreso_hogar) %>% mutate_all(~(as.numeric(.))) 
+
+cor.test(p$just_educacion, p$ingreso_hogar, method = "pearson")
+
+0.02^2
+
+0.0004*100
+```
+
+La correlación de Pearson indica un relación baja y positiva, de modo que a mayor preferencia por justicia de mercado presentan un mayor monto total a nivel de su hogar. Sin embargo esta relación no es significativa (p-value = 0.1) y comparten muy baja varianza (0.04%).
+
+## Regresión lineal
+
+```{r}
+proc_data <- proc_data %>% mutate_all(~(as.numeric(.))) 
+```
+
+variable dependiente
+
+```{r}
+plot_stackfrq(proc_data[, "just_educacion"]) + theme(legend.position="bottom")
+```
+
+```{r}
+fit01<- lm(just_educacion~genero,data=proc_data)
+fit02<- lm(just_educacion~ingreso_hogar,data=proc_data)
+fit03<- lm(just_educacion~estatus_subj,data=proc_data)
+fit04<- lm(just_educacion~cercania_escuelas,data=proc_data)
+```
+
+```{r}
+labs01 <- c("Intercepto","Género",
+            "Ingreso Total Hogar","Estatus Social Subjetivo","Cercanía Escuelas")
+```
+
+```{r}
+#screenreg para que se vea en R
+screenreg(list(fit01,fit02,fit03,fit04),custom.coef.names = labs01)
+```
+
+```{r}
+# htmlreg para que se vea en el sitio web
+knitreg(list(fit01,fit02,fit03,fit04),
+        custom.model.names = c("Modelo 1","Modelo 2","Modelo 3", "Modelo 4"),
+        custom.coef.names = labs01)
+```
+
+valores predichos: genero
+
+```{r}
+knitreg(list(fit01), 
+        custom.model.names = c("Modelo 1"),
+        custom.coef.names = c("Intercepto",
+                              "Género (mujer=1)"))
+```
+
+```{r}
+
+
+pred <- ggeffects::ggpredict(fit01, terms = c("genero"))
+print(names(pred))
+
+ggeffects::ggpredict(fit01, terms = c("genero")) %>%
+  ggplot(aes(x=x, y=predicted)) +
+  geom_bar(stat="identity", color="grey", fill="grey")+
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
+  labs(title="Género", x = "", y = "") +
+  theme_bw() +
+  scale_x_continuous(name = "",
+                     breaks = c(0,1),
+                     labels = c("Hombre", "Mujer"))+
+  scale_y_continuous(limits = c(0,16), 
+                     breaks = seq(0,16, by = 1))
+```
+
+```{r}
+
+#valores predichos variable cuanti 
+#ggeffects::ggpredict(fit02, terms="edad") %>%
+ # ggplot(mapping=aes(x = x, y=predicted)) +
+ # labs(title="Edad", x = "", y = "")+
+#  theme_bw() +
+#  geom_smooth()+
+#  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
+ # scale_x_continuous(breaks = seq(0,100, by = 10))+
+ # scale_y_continuous(limits = c(0,16), 
+ #                    breaks = seq(0,16, by = 1))
+```
+
+interacciones
+
+```{r}
+#fit08<- lm(just_educacion~genero+edad+quintilemiss+pospol*edad,data=elsoc)
+#sjPlot::tab_model(fit07,fit08, show.ci = FALSE, pred.labels=c("Intercepto",
+             #                 "Sexo (mujer=1)"))
+```
+
+```{r}
+#sjPlot::plot_model(fit08, type = "int") +
+#  theme_bw() +
+ # theme(legend.position = "bottom")
+```
+
+## Regresión logística
+
+```{r}
+
+```
+
+odd ratios
+
+```{r}
+
+```
+
+valores predichos
+
+```{r}
+
+```
+
+bondad de ajuste
+
+```{r}
+
+```
+
+interacciones
+
+```{r}
+
+```
+
+## Conclusiones
