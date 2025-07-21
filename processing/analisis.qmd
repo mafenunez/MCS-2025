@@ -28,6 +28,24 @@ load("../output/proc_data.RData")
 
 ## Formulación del problema
 
+La educación se inscribe en una realidad donde, en gran medida, los establecimientos educacionales con mejores indicadores académicos y mejores climas escolares son justamente aquellos que exigen un mayor poder adquisitivo. Al respecto, entran en tensión las posturas que defienden la educación como el principal motor de generación de oportunidades y movilidad social [@collins_sociedad_1989], en contra de aquellas que señalan las escuelas como meros sistemas de reproducción social que perpetúan las desigualdades de base de los jóvenes [@bourdieu_herederos_2009]. Así, el sistema educacional se trata de una de las esferas de desigualdad que caracterizan al país. Estas desigualdades económicas tienen gran incidencia en la conformación de creencias en torno a la legitimación de estas desigualdades, así como en las ideas de justicia social de los individuos en torno a la distribución de bienes. En este contexto, la justicia de mercado, entendida como la adhesión de los individuos a la idea del merecimiento de bienes y servicios (como educación, salud y/o pensiones) en función de su capacidad de pago [@castillo_socialization_2024], es sumamente importante para comprender las preferencias distributivas que poseen las y los chilenos. 
+
+Las preferencias por justicia de mercado, en tanto se considera que los principios de mercado es lo que debería regir en el ámbito educativo, tiene vínculos directos y positivos con las percepciones de meritocracia [@castillo_changes_2025]. @garcia-sanchez_creencias_2022 observan un efecto moderador de las creencias que justifican la desigualdad en el efecto del estatus social percibido en las preferencias redistributivas. 
+
+H1: Quienes tienen una mayor percepción de meritocracia en la sociedad prefieren en mayor medida la justicia de mercado en la eduación.
+
+H2: A mayor percepción de meritocracia, quienes tienen un estatus social subjetivo alto prefieren en menor medida la justicia de mercado en la eduación. 
+
+Por otro lado, en tanto indicador objetivo, según @weisstanner_redistributive_2022, el ingreso condiciona las preferencias por la redistribución, en donde a menor ingreso real se observa un mayor apoyo a políticas redistributivas. 
+
+H3: La personas que poseen una menor ingresos en sus hogares prefieren en menor medida la justificia de mercado en la eduación.
+
+Por último, @sen_gender_1995 enfatiza en la consideración de las desigualdades de género en el estudio de la justicia, indicando la complejidad de dicho asunto al ser legitimación incluso desde las mismas mujeres. Así, @mengel_preferences_2023 indican que se puede encontrar una tendencia similar en la bibliografía sobre las actitudes de género hacia las políticas redistributivas, siendo la demanda de redistribución de las mujeres mayor en conjunto.
+
+H4: Las mujeres preferirían en menor medida la justicia de mercado en la educación. 
+
+Finalmente, en un contexto altamente desigual como el chileno —donde el 50% más pobre recibe solamente el 10% de los ingresos totales, mientras que el 1% más rico recibe casi el 27% de los ingresos del país [@chancel_world_2022]— y que, a pesar de las brechas evidentes de ingreso, estas son legitimidad por la sociedad [@castillo_legitimacy_2011], es que las preferencias de redistribución en torno a la educación se vuelven relevantes de estudiar. Además, según @mengel_preferences_2023 este tipo de desigualdad es uno de los determinantes más importantes de las preferencias por la redistribución. En ese marco, el presente estudio tiene como objetivo explorar los factores que influyen en las preferencias distributivas de adultos sobre educación en Chile y así responder a la pregunta: ¿Cuál es el efecto de las percepciones y variables sociodemográficas en las preferencias por justicia de mercado en la población chilena?
+
 
 ## Base de datos
 
@@ -276,7 +294,7 @@ texreg::texreg(list(fit01,fit02,fit03,fit04),custom.coef.names = labs01)
 ```
 
 
-### Valores predichos: género
+### Valores predichos: Género
 
 ```{r}
 #| echo: false
@@ -307,7 +325,7 @@ ggeffects::ggpredict(fit01, terms = c("genero")) %>%
                      breaks = seq(0,16, by = 1))
 ```
 
-### Valores predichos: ingreso
+### Valores predichos: Ingreso
 ```{r}
 #| echo: false
 
@@ -315,6 +333,73 @@ ggeffects::ggpredict(fit01, terms = c("genero")) %>%
 ggeffects::ggpredict(fit02, terms="ingreso_hogar") %>%
   ggplot(mapping=aes(x = x, y=predicted)) +
   labs(title="Ingreso Hogar", x = "", y = "")+
+  theme_bw() +
+ geom_smooth()+
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
+  scale_x_continuous(breaks = seq(0,100, by = 10))+
+  scale_y_continuous(limits = c(0,16), 
+                     breaks = seq(0,16, by = 1))
+```
+
+### Valores predichos: Estatus social subjetivo
+
+```{r}
+#| echo: false
+
+#valores predichos variable cuanti 
+ggeffects::ggpredict(fit03, terms="estatus_subj") %>%
+  ggplot(mapping=aes(x = x, y=predicted)) +
+  labs(title="Estatus Social Subjetivo", x = "", y = "")+
+  theme_bw() +
+ geom_smooth()+
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
+  scale_x_continuous(breaks = seq(0,100, by = 10))+
+  scale_y_continuous(limits = c(0,16), 
+                     breaks = seq(0,16, by = 1))
+```
+
+### Valores predichos: Esfuerzo 
+
+```{r}
+#| echo: false
+
+#valores predichos variable cuanti 
+ggeffects::ggpredict(fit04, terms="esfuerzo") %>%
+  ggplot(mapping=aes(x = x, y=predicted)) +
+  labs(title="Esfuerzo", x = "", y = "")+
+  theme_bw() +
+ geom_smooth()+
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
+  scale_x_continuous(breaks = seq(0,100, by = 10))+
+  scale_y_continuous(limits = c(0,16), 
+                     breaks = seq(0,16, by = 1))
+
+
+pred <- ggeffects::ggpredict(fit04, terms = c("esfuerzo"))
+print(names(pred))
+
+ggeffects::ggpredict(fit04, terms = c("esfuerzo")) %>%
+  ggplot(aes(x=x, y=predicted)) +
+  geom_bar(stat="identity", color="grey", fill="grey")+
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
+  labs(title="Esfuerzo", x = "", y = "") +
+  theme_bw() +
+  scale_x_continuous(name = "",
+                     breaks = c(0,1)) +
+                     #labels = c("Hombre", "Mujer"))+
+  scale_y_continuous(limits = c(0,16), 
+                     breaks = seq(0,16, by = 1))
+```
+
+### Valores predichos: Talento
+
+```{r}
+#| echo: false
+
+#valores predichos variable cuanti 
+ggeffects::ggpredict(fit05, terms="talento") %>%
+  ggplot(mapping=aes(x = x, y=predicted)) +
+  labs(title="Talento", x = "", y = "")+
   theme_bw() +
  geom_smooth()+
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
@@ -345,8 +430,11 @@ texreg::texreg(list(fit06,fit07,fit08, fit09),
 
 ```{r}
 #| echo: false
-fit10<- lm(just_educacion~genero+ingreso_hogar+estatus_subj+esfuerzo*talento,data=proc_data_lm)
+fit10<- lm(just_educacion~genero+ingreso_hogar+estatus_subj*esfuerzo+talento,data=proc_data_lm)
 sjPlot::tab_model(fit09,fit10, show.ci = FALSE)
+
+fit11<- lm(just_educacion~genero+ingreso_hogar+estatus_subj*talento+esfuerzo,data=proc_data_lm)
+sjPlot::tab_model(fit09,fit11, show.ci = FALSE)
 
 ```
 
@@ -357,6 +445,12 @@ sjPlot::plot_model(fit10, type = "int") +
   theme(legend.position = "bottom")
 ```
 
+```{r}
+#| echo: false
+sjPlot::plot_model(fit11, type = "int") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
 
 ## Regresión logística
 
@@ -399,10 +493,6 @@ sjPlot::plot_stackfrq(proc_data$just_educacion_recod) +
 
 ### Modelos simples
 
-```{r}
-#| echo: false
-#proc_data <- proc_data %>% mutate_all(~(as.numeric(.))) 
-```
 
 ```{r}
 #| echo: false
@@ -415,6 +505,17 @@ m05<- glm(just_educacion_recod~talento,data=proc_data, family = "binomial"(link 
 
 
 ### Modelos multivariados
+
+```{r}
+proc_data <- proc_data %>% mutate_all(~(as.numeric(.)))
+
+proc_data <- proc_data %>%
+  mutate(just_educacion_recod = car::recode(just_educacion_recod,
+    "1 = 0;
+     2 = 1"
+  )) 
+```
+
 
 ```{r}
 #| echo: false
@@ -458,7 +559,23 @@ texreg::texreg(list(m1log,m2log,m3log,m4log),
 ```{r}
 #| echo: false
 
+FigSind_1_Prob <- ggeffects::ggpredict(m3log, terms = c("genero")) %>%
+  ggplot(aes(x=x, y=predicted)) +
+  geom_bar(stat="identity", color="grey", fill="grey")+
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
+  labs(title="Género", x = "", y = "") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 12), 
+        axis.text.x = element_text(angle = 0, vjust = 0.5, size = 12),
+        axis.text.y = element_text(vjust = 0.5, size = 10)) +
+  scale_x_continuous(name = "",
+                     breaks = c(0,1),
+                     labels = c("Hombre", " Mujer")) +
+  scale_y_continuous(limits = c(0,0.35), 
+                     breaks = seq(0,0.35, by = 0.05),
+                     labels = scales::percent_format(accuracy = 1L))
 
+FigSind_1_Prob
 ```
 
 ```{r}
@@ -497,19 +614,90 @@ texreg::texreg(list(m1log,m2log,m3log),
 
 ### Efectos de interacción
 
+variables de meritocracia con estatus social subjetivo
+
 ```{r}
 #| echo: false
 #| results: asis
 
+m3.1log <- glm(just_educacion_recod~genero+ingreso_hogar+estatus_subj*esfuerzo+talento,data=proc_data,family = "binomial")
 
+m3.2log <- glm(just_educacion_recod~genero+ingreso_hogar+estatus_subj*talento+esfuerzo,data=proc_data,family = "binomial")
 ```
 
+```{r}
+htmlreg(list(m1log,m2log,m3log,m3.1log),
+          custom.model.names = c("M1 (log odds)","M2 (log odds)","M3 (log odds)",
+                                 "M3.1 (log odds)"),
+          digits = 3, 
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†")
+```
+
+```{r}
+htmlreg(list(m1log,m2log,m3log,m3.2log),
+          custom.model.names = c("M1 (log odds)","M2 (log odds)","M3 (log odds)",
+                                 "M3.2 (log odds)"),
+          digits = 3, 
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†")
+```
 
 ```{r}
 #| echo: false
 
 #grafico de probablidades predichas
+# ojo que la relación sindicalización x sector privado no es significativa
+FigSindSector_int<-ggeffects::ggpredict(m3.1log, terms = c("estatus_subj", "esfuerzo")) %>%
+  ggplot(aes(x=x, y=predicted, shape = group, color = group)) +
+  geom_line(aes(group=group,linetype = group),position = position_dodge(.1)) + 
+  geom_point(size = 2.5,position = position_dodge(.1))+
+  scale_x_continuous(name = "", breaks=c(0,1), labels = c("No sindicalizados/as", "Sindicalizados/as")) + 
+  scale_shape_discrete(name = "Sector de empleo",
+                       limits = c("0", "1"),
+                       labels = c("Público", "Privado")) +
+  scale_color_manual(name = "Sector de empleo",
+                     limits = c("0", "1"),
+                     labels = c("Público", "Privado"),
+                     values = c("black", "black")) +
+  scale_linetype_manual(name = "Sector de empleo",
+                        limits = c("0", "1"),
+                        labels = c("Público", "Privado"),
+                        values = c("solid", "dashed")) +
+  scale_y_continuous(limits = c(0,0.40), breaks=seq(0,0.40, by = 0.05),
+                     labels = scales::percent_format(accuracy = 1L)) +
+  theme_bw() +
+  labs(title="", y = "") + 
+  theme(plot.title = element_text(size = 11),
+        axis.text=element_text(size=11))
 
+FigSindSector_int
+```
+
+```{r}
+# ojo que la relación sindicalización x sector privado no es significativa
+FigSindSector_int<-ggeffects::ggpredict(m3.2log, terms = c("estatus_Subj", "talento")) %>%
+  ggplot(aes(x=x, y=predicted, shape = group, color = group)) +
+  geom_line(aes(group=group,linetype = group),position = position_dodge(.1)) + 
+  geom_point(size = 2.5,position = position_dodge(.1))+
+  scale_x_continuous(name = "", breaks=c(0,1), labels = c("No sindicalizados/as", "Sindicalizados/as")) + 
+  scale_shape_discrete(name = "Sector de empleo",
+                       limits = c("0", "1"),
+                       labels = c("Público", "Privado")) +
+  scale_color_manual(name = "Sector de empleo",
+                     limits = c("0", "1"),
+                     labels = c("Público", "Privado"),
+                     values = c("black", "black")) +
+  scale_linetype_manual(name = "Sector de empleo",
+                        limits = c("0", "1"),
+                        labels = c("Público", "Privado"),
+                        values = c("solid", "dashed")) +
+  scale_y_continuous(limits = c(0,0.40), breaks=seq(0,0.40, by = 0.05),
+                     labels = scales::percent_format(accuracy = 1L)) +
+  theme_bw() +
+  labs(title="", y = "") + 
+  theme(plot.title = element_text(size = 11),
+        axis.text=element_text(size=11))
+
+FigSindSector_int
 ```
 
 ## Conclusiones
