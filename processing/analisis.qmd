@@ -2,6 +2,7 @@
 title: "Justicia de mercado en la eduación: un estudio de las preferencias distributivas en Chile"
 author: María Fernanda Núñez y Tomás Urzúa
 bibliography: "../input/bib/metodos-final.bib"
+link-citations: true
 format: 
  pdf: 
   include-in-header: preamble.tex
@@ -32,21 +33,21 @@ load("../output/proc_data.RData")
 
 La educación se inscribe en una realidad donde, en gran medida, los establecimientos educacionales con mejores indicadores académicos y mejores climas escolares son justamente aquellos que exigen un mayor poder adquisitivo. Al respecto, entran en tensión las posturas que defienden la educación como el principal motor de generación de oportunidades y movilidad social [@collins_sociedad_1989], en contra de aquellas que señalan las escuelas como meros sistemas de reproducción social que perpetúan las desigualdades de base de los jóvenes [@bourdieu_herederos_2009]. Así, el sistema educacional se trata de una de las esferas de desigualdad que caracterizan al país. Estas desigualdades económicas tienen gran incidencia en la conformación de creencias en torno a la legitimación de estas desigualdades, así como en las ideas de justicia social de los individuos en torno a la distribución de bienes. En este contexto, la justicia de mercado, entendida como la adhesión de los individuos a la idea del merecimiento de bienes y servicios (como educación, salud y/o pensiones) en función de su capacidad de pago [@castillo_socialization_2024], es sumamente importante para comprender las preferencias distributivas que poseen las y los chilenos. 
 
-Las preferencias por justicia de mercado, en tanto se considera que los principios de mercado es lo que debería regir en el ámbito educativo, tiene vínculos directos y positivos con las percepciones de meritocracia [@castillo_changes_2025]. @garcia-sanchez_creencias_2022 observan un efecto moderador de las creencias que justifican la desigualdad en el efecto del estatus social percibido en las preferencias redistributivas. 
+Las preferencias por justicia de mercado, en tanto se considera que los principios de mercado es lo que debería regir en el ámbito educativo, tiene vínculos directos y positivos con las percepciones de meritocracia [@castillo_changes_2025]. @garcia-sanchez_creencias_2022 observan un efecto moderador de las creencias que justifican la desigualdad en el efecto del estatus social percibido en las preferencias redistributivas. Así, se plantea lo siguiente:
 
-H1: Quienes tienen una mayor percepción de meritocracia en la sociedad prefieren en mayor medida la justicia de mercado en la eduación.
+H1: Quienes tienen una mayor percepción de meritocracia en la sociedad preferirían en mayor medida la justicia de mercado en la eduación.
 
-H2: A mayor percepción de meritocracia, quienes tienen un estatus social subjetivo alto prefieren en menor medida la justicia de mercado en la eduación. 
+H2: A menor percepción de meritocracia, quienes tienen un estatus social subjetivo alto preferirían en menor medida la justicia de mercado en la eduación. 
 
-Por otro lado, en tanto indicador objetivo, según @weisstanner_redistributive_2022, el ingreso condiciona las preferencias por la redistribución, en donde a menor ingreso real se observa un mayor apoyo a políticas redistributivas. 
+Por otro lado, en tanto indicador objetivo, según @weisstanner_redistributive_2022, el ingreso condiciona las preferencias por la redistribución, en donde a menor ingreso real se observa un mayor apoyo a políticas redistributivas. De esa manera, hipotetizamos que:  
 
-H3: La personas que poseen una menor ingresos en sus hogares prefieren en menor medida la justificia de mercado en la eduación.
+H3: La personas que poseen una menor ingresos en sus hogares preferirían en menor medida la justificia de mercado en la educación.
 
-Por último, @nussbaum_gender_2025 enfatizan en la consideración de las desigualdades de género en el estudio de la justicia, indicando la complejidad de dicho asunto al ser legitimación incluso desde las mismas mujeres. Así, @mengel_preferences_2023 indican que se puede encontrar una tendencia similar en la bibliografía sobre las actitudes de género hacia las políticas redistributivas, siendo la demanda de redistribución de las mujeres mayor en conjunto.
+Por último, @nussbaum_gender_2025 enfatizan en la consideración de las desigualdades de género en el estudio de la justicia, indicando la complejidad de dicho asunto al ser legitimada incluso desde las mismas mujeres. Así, @mengel_preferences_2023 indican que se puede encontrar una tendencia sobre las actitudes de género hacia las políticas redistributivas, siendo la demanda de redistribución de las mujeres mayor en conjunto. Por ende, es posible plantear lo siguiente:
 
 H4: Las mujeres preferirían en menor medida la justicia de mercado en la educación. 
 
-Finalmente, en un contexto altamente desigual como el chileno —donde el 50% más pobre recibe solamente el 10% de los ingresos totales, mientras que el 1% más rico recibe casi el 27% de los ingresos del país [@chancel_world_2022]— y que, a pesar de las brechas evidentes de ingreso, estas son legitimidad por la sociedad [@castillo_legitimacy_2011], es que las preferencias de redistribución en torno a la educación se vuelven relevantes de estudiar. Además, según @mengel_preferences_2023 este tipo de desigualdad es uno de los determinantes más importantes de las preferencias por la redistribución. En ese marco, el presente estudio tiene como objetivo explorar los factores que influyen en las preferencias distributivas de adultos sobre educación en Chile y así responder a la pregunta: ¿Cuál es el efecto de las percepciones y variables sociodemográficas en las preferencias por justicia de mercado en la población chilena?
+Finalmente, en un contexto altamente desigual como el chileno —donde el 50% más pobre recibe solamente el 10% de los ingresos totales, mientras que el 1% más rico recibe casi el 27% de los ingresos del país [@chancel_world_2022]— y que, a pesar de las brechas evidentes de ingreso, estas son legitimadas por la sociedad [@castillo_legitimacy_2011], es que las preferencias de redistribución en torno a la educación se vuelven relevantes de estudiar. Además, según @mengel_preferences_2023 este tipo de desigualdad es uno de los determinantes más importantes de las preferencias por la redistribución. En ese marco, el presente estudio tiene como objetivo explorar los factores que influyen en las preferencias distributivas de adultos sobre educación en Chile y así responder a la pregunta: ¿Cuál es el efecto de las percepciones de meritocracia, el género, el estatus social subjetivo y el ingreso del hogar en las preferencias por justicia de mercado en la población chilena?
 
 
 ## Base de datos
@@ -292,7 +293,7 @@ La correlación de Pearson para la variable de ingreso total del hogar indica un
 
 ```{r}
 #| echo: false
-plot_stackfrq(proc_data[, "just_educacion"]) + theme(legend.position="bottom") + labs(title = "Preferencias por justicia a la educación")
+plot_stackfrq(proc_data[, "just_educacion"]) + theme(legend.position="bottom") + labs(title = "Preferencias por justicia de mercado en la educación")
 ```
 
 
@@ -327,6 +328,7 @@ texreg::texreg(list(fit01,fit02,fit03,fit04, fit05), float.pos = "H")
 Considerando el efecto de cada variable sin controlar por el resto de las variables, se observa que las variables mantienen su efecto, de modo que estas son significativas (excepto el ingreso total de los hogares).  
 
 
+
 ### Modelos multivariados
 
 ```{r}
@@ -341,82 +343,15 @@ texreg::texreg(list(fit06,fit07,fit08, fit09),
         custom.model.names = c("Modelo 1","Modelo 2","Modelo 3", "Modelo 4"), float.pos = "H")
 ```
 
-INTERPRETACION
-R2
+Al controlar por el resto las variables independientes, el efecto del género se mantiene. En el caso de las percepciones de esfuerzo, las categorías "Ni de acuerdo ni en desacuerdo" y "De acuerdo", mantienen su efecto. De forma similar, las percepciones de talento mentienen su efecto en las categorías "Ni de acuerdo ni en desacuerdo", "De acuerdo" y "Totalmente de acuerdo". 
 
-### Valores predichos: Género
+Esto nos permite decir que el efecto del género es estable en todos los modelos parciales y significativo (p < 0.01). Por ende, es posible afirmar que las mujeres prefieren en menor medida la justicia de mercado en la educación, aun controlando por otras variables como lo son las percepciones meritocráticas y su estatus. 
 
+Por otro lado, respecto a las percepción relativa al esfuerzo en la sociedad, esta se mantiene en los valores más centrales pero con una significancia mayor en el categoría "De acuerdo" (p < 0.01). Así, es que podemos decir que las personas que se muestran neutrales y parcialmente de acuerdo con que en la sociedad se es recompensado el esfuerzo prefieren en mayor medida la justicia de mercado en la educación. Observando la parcialización, la percepción por el esfuerzo se muestra controlada por el percepción por el talento y no por las variables sociodemográficas. 
 
-```{r}
-#| echo: false
+En el caso de la percepción relativa al talento, esta mantiene su significancia en las tres cateogrías al ser introducida en el modelo y con una mayor signficacancia (p < 0.001) en la categoría más extrema de acuerdo. Con ello, es posible afirmar que las personas que se muestran de acuerdo con que en la sociedad se es recompensada la inteligencia y la habilidad prefieren en mayor medida la justicia de mercado en la educación. 
 
-pred <- ggeffects::ggpredict(fit09, terms = c("genero"))
-
-ggeffects::ggpredict(fit09, terms = c("genero")) %>%
-  ggplot(aes(x=x, y=predicted)) +
-  geom_bar(stat="identity", color="grey", fill="grey")+
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
-  labs(title="Género", x = "", y = "") +
-  theme_bw() +
-  #scale_x_continuous(name = "",
-                 #    breaks = c(0,1),
-                  #   labels = c("Hombre", "Mujer"))+
-  scale_y_continuous(limits = c(0,5), 
-                     breaks = seq(0,16, by = 1))
-```
-
-Se observan diferencias por g
-
-
-INTERPRETACION
-
-### Valores predichos: Esfuerzo 
-
-```{r}
-#| echo: false
-
-pred <- ggeffects::ggpredict(fit09, terms = c("esfuerzo"))
-
-
-ggeffects::ggpredict(fit09, terms = c("esfuerzo")) %>%
-  ggplot(aes(x=x, y=predicted)) +
-  geom_bar(stat="identity", color="grey", fill="grey")+
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
-  labs(title="Esfuerzo", x = "", y = "") +
-  theme_bw() +
- # scale_x_continuous(name = "",
-  #                   breaks = c(0,1)) +
-                     #labels = c("Hombre", "Mujer"))+
-  scale_y_continuous(limits = c(0,5), 
-                     breaks = seq(0,16, by = 1))  +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-INTERPRETACION
-
-### Valores predichos: Talento
-
-```{r}
-#| echo: false
-
-pred <- ggeffects::ggpredict(fit09, terms = c("talento"))
-
-
-ggeffects::ggpredict(fit09, terms = c("talento")) %>%
-  ggplot(aes(x=x, y=predicted)) +
-  geom_bar(stat="identity", color="grey", fill="grey")+
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
-  labs(title="Talento", x = "", y = "") +
-  theme_bw() +
- # scale_x_continuous(name = "",
-  #                   breaks = c(0,1)) +
-                     #labels = c("Hombre", "Mujer"))+
-  scale_y_continuous(limits = c(0,5), 
-                     breaks = seq(0,16, by = 1))  +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-INTERPRETACION
+Si bien, al agregar predictores al modelo la varianza aumenta, esto no es en gran medida (de 1% a un 3%). De todos modos, el modelo presenta una baja capacidad explicativa.  
 
 
 ### Efectos de interacción
@@ -436,9 +371,11 @@ texreg::texreg(list(fit09,fit10),
 
 ```
 
-INTERPRETACION
+Al considerar la interacción entre el estatus social subjetivo y la percepción del esfuerzo social, se observa que esta no es significativa. Aún así, el efecto significativo del género (p < 0.01) y las categorías "Ni de acuerdo ni en desacuerdo" (p < 0.05), "De acuerdo" (p < 0.05) y "Totalmente de acuerdo" (p < 0.01) se mantienen estables y significativas. 
 
+Con ello, es posible afirmar que la interacción entre estatus social subjetivo y la percepción de esfuerzo social no afecta en las preferencias por justicia de mercado en la educación. 
 
+La varianza asociada al modelo con efecto de interacción se mantiene en un 3% y, por ende, con una baja capacidad explicativa. 
 
 ```{r}
 #| echo: false
@@ -457,7 +394,13 @@ sjPlot::plot_model(fit11, type = "int") +
   theme(legend.position = "right")
 ```
 
-INTERPRETACIÓN
+Al considerar la interacción entre el estatus social subjetivo y la percepción del talento social, se observa que esta es significativa para el caso de las categorías "En desacuerdo" (p < 0.01) y "Ni de acuerdo ni en desacuerdo" (p < 0.05) y que la relación es negativa. Esto permite afirmar que la interacción entre estatus social subjetivo y la percepción de esfuerzo social afecta negativamente en las preferencias por justicia de mercado en la educación. Es decir, que las personas que están en desacuerdo con el talento social es recompensado y poseen un estatus social subjetivo más alto prefieren en menor medida la justicia de mercado en la educación. 
+
+El efecto significativo del género se mantiene estable y significativo (p < 0.01). Por otro lado, en el caso de las percepciones asociadas al esfuerzo social, esta se vuelve significativa para las categorías "Ni de acuerdo ni en desacuerdo" (p < 0.05), "De acuerdo" (p < 0.01), con un efecto positivo en las preferencias por justicia de mercado. 
+
+
+La varianza asociada al modelo con efecto de interacción se aumenta a un 3.3% y, aun así esto sigue evidenciando una baja capacidad explicativa. 
+
 
 
 ## Regresión logística
@@ -471,7 +414,7 @@ INTERPRETACIÓN
 
 sjPlot::plot_stackfrq(proc_data_log$just_educacion_recod) +
   theme(legend.position = "bottom") +
-  labs(title = "Preferencias por justicia a la educación dicotómica")
+  labs(title = "Preferencias por justicia de mercado en la educación dicotómica")
 
 ```
 
@@ -494,7 +437,8 @@ texreg::texreg(list(m01,m02,m03,m04,m05),
           stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
 ```
 
-INTERPRETACION
+Considerando el efecto de cada variable sin controlar por el resto de las variables, se observa que solo la variable género mantiene su efecto (p < 0.01) y las categoría de "Totalmente de acuerdo" para ambas percepciones sobre meritocracia (con un p < 0.05 en el caso del esfuerzo y un p < 0.01 en el caso del talento). 
+
 
 ### Modelos multivariados
 
@@ -522,65 +466,8 @@ m1log <- glm(just_educacion_recod~ genero + ingreso_hogar, data = proc_data_log,
 m2log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj, data = proc_data_log,family = "binomial")
 m3log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj + esfuerzo, data = proc_data_log, family = "binomial")
 m4log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj + esfuerzo + talento, data = proc_data_log, family = "binomial")
-
-texreg::texreg(list(m1log,m2log,m3log,m4log),
-          custom.model.names = c("M1 (log odds)","M2 (log odds)","M3 (log odds)", "M4 (log odds)"),
-          digits = 3, 
-          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
-
 ```
 
-INTERPRETACION
-
-### Estimación de odds ratios
-
-```{r}
-#| echo: false
-#| results: asis
-
-### Cálculo de OR para cada modelo
-m1log_OR <- exp(coef(m1log))
-m2log_OR <- exp(coef(m2log))
-m3log_OR <- exp(coef(m3log))
-m4log_OR <- exp(coef(m4log))
-
-##Odds ratios en tabla de texreg::texreg
-texreg::texreg(list(m1log,m2log,m3log,m4log), 
-          override.coef = list(m1log_OR,m2log_OR,m3log_OR,m4log_OR), # Sobreescribir coeficientes
-          custom.model.names = c("m1 (OR)","m2 (OR)","m3 (OR)", "m4 (OR)"),
-          digits = 3, 
-          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
-```
-
-INTERPETAACION
-
-### Probabilidades predichas
-
-```{r}
-#| echo: false
-
-FigSind_1_Prob <- ggeffects::ggpredict(m4log, terms = c("genero")) %>%
-  ggplot(aes(x=x, y=predicted)) +
-  geom_bar(stat="identity", color="grey", fill="grey")+
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
-  labs(title="Género", x = "", y = "") +
-  theme_bw() +
-  theme(plot.title = element_text(size = 12), 
-        axis.text.x = element_text(angle = 0, vjust = 0.5, size = 12),
-        axis.text.y = element_text(vjust = 0.5, size = 10)) +
-  #scale_x_continuous(name = "",
-                #     breaks = c(0,1),
-                 #    labels = c("Hombre", " Mujer")) +
-  scale_y_continuous(limits = c(0,0.35), 
-                     breaks = seq(0,0.35, by = 0.05),
-                     labels = scales::percent_format(accuracy = 1L))
-
-FigSind_1_Prob
-```
-
-INTERPRETACION
-
-### Bondad de ajuste
 
 ```{r}
 #| echo: false
@@ -609,7 +496,57 @@ texreg::texreg(list(m1log,m2log,m3log,m4log),
           stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
 ```
 
-INTERPRETACION
+Al controlar por el resto las variables independientes, el efecto del género se mantiene. Esto nos permite decir que el efecto del género es estable en todos los modelos parciales y significativo (p < 0.01). Por ende, es posible afirmar que las mujeres están en desacuerdo con la justicia de mercado en la educación, aun controlando por otras variables como lo son las percepciones meritocráticas y su estatus. 
+
+Si bien, al agregar predictores al modelo la capacidad explicativa del modelo aumenta, esta sigue siendo muy baja (Pseudo R2 = 0.017).
+
+### Estimación de odds ratios
+
+```{r}
+#| echo: false
+#| results: asis
+
+### Cálculo de OR para cada modelo
+m1log_OR <- exp(coef(m1log))
+m2log_OR <- exp(coef(m2log))
+m3log_OR <- exp(coef(m3log))
+m4log_OR <- exp(coef(m4log))
+
+##Odds ratios en tabla de texreg::texreg
+texreg::texreg(list(m1log,m2log,m3log,m4log), 
+          override.coef = list(m1log_OR,m2log_OR,m3log_OR,m4log_OR), # Sobreescribir coeficientes
+          custom.model.names = c("m1 (OR)","m2 (OR)","m3 (OR)", "m4 (OR)"),
+          digits = 3, 
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
+```
+
+En el caso del género, los odd ratios, al ser menores a 0, (OR = 0.7) indican que es poco probable que las mujeres esten de acuerdo con la justicia de mercado en la educación. 
+
+### Probabilidades predichas
+
+```{r}
+#| echo: false
+
+FigSind_1_Prob <- ggeffects::ggpredict(m4log, terms = c("genero")) %>%
+  ggplot(aes(x=x, y=predicted)) +
+  geom_bar(stat="identity", color="grey", fill="grey")+
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
+  labs(title="Género", x = "", y = "") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 12), 
+        axis.text.x = element_text(angle = 0, vjust = 0.5, size = 12),
+        axis.text.y = element_text(vjust = 0.5, size = 10)) +
+  #scale_x_continuous(name = "",
+                #     breaks = c(0,1),
+                 #    labels = c("Hombre", " Mujer")) +
+  scale_y_continuous(limits = c(0,0.35), 
+                     breaks = seq(0,0.35, by = 0.05),
+                     labels = scales::percent_format(accuracy = 1L))
+
+FigSind_1_Prob
+```
+
+En el gráfico se puede observar que controlando por el resto de las variables, la probabilidad predicha de estar de acuerdo con la justicia de mercado en la educación es mayor para los hombres (25% aproximandamente) que para las mujeres (17.5% aproximadamente). Sin embargo, considerando los IC de cada uno, estos se superponen, por ende, la diferencia entre ambos grupos no es significativa.  
 
 ### Efectos de interacción
 
@@ -626,21 +563,36 @@ m3.2log <- glm(just_educacion_recod~genero+ingreso_hogar+estatus_subj*talento+es
 ```{r}
 #| echo: false
 #| results: asis
-texreg(list(m3log,m3.1log),
-          custom.model.names = c("M3 (log odds)",
-                                 "M3.1 (log odds)"),
+
+
+#pseudo R2
+
+m3.1log_R2<-DescTools::PseudoR2(m3.1log)
+m3.2log_R2<-DescTools::PseudoR2(m3.2log)
+
+#Misma tabla, en log odds, con Pseudo R2
+texreg::texreg(list(m4log,m3.1log),
+          custom.model.names = c("M4 (log odds)",
+                                 "M4.1 (log odds)"),
+          custom.gof.rows=list("Pseudo R2" = c(m4log_R2, m3.1log_R2)),
           digits = 3, 
           stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
+
 ```
 
-INTERPRETACION
+Al considerar la interacción entre el estatus social subjetivo y la percepción del esfuerzo social, se observa que esta no es significativa. Aún así, el efecto significativo del género (p < 0.01) se mantiene estable y significativo. 
+
+Con ello, es posible afirmar que la interacción entre estatus social subjetivo y la percepción de esfuerzo social no afecta en las preferencias por justicia de mercado en la educación. 
+
+Si bien, al agregar predictores al modelo la capacidad explicativa del modelo aumenta, esta sigue siendo muy baja (Pseudo R2 = 0.018). 
 
 ```{r}
 #| echo: false
 #| results: asis
-texreg(list(m3log,m3.2log),
-          custom.model.names = c("M3 (log odds)",
-                                 "M3.2 (log odds)"),
+texreg::texreg(list(m4log,m3.2log),
+          custom.model.names = c("M4 (log odds)",
+                                 "M4.2 (log odds)"),
+          custom.gof.rows=list("Pseudo R2" = c(m4log_R2, m3.2log_R2)),
           digits = 3, 
           stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
 ```
@@ -670,17 +622,28 @@ Fig
 ```
 
 
-INTERPRETACION
+Al considerar la interacción entre el estatus social subjetivo y la percepción del talento social, se observa que esta es significativa para el caso de las categorías "En desacuerdo" (p < 0.01) y que la relación es negativa. Esto permite afirmar que la interacción entre estatus social subjetivo y la percepción de esfuerzo social afecta negativamente en las preferencias por justicia de mercado en la educación. Es decir, que las personas que están en desacuerdo con el talento social es recompensado y poseen un estatus social subjetivo más alto prefieren en menor medida la justicia de mercado en la educación. 
+
+El efecto significativo del género se mantiene estable y significativo (p < 0.01).
+
+Para esta interacción, la capacidad explicativa del modelo aumenta y, si bien es baja, es aceptable (Pseudo R2 = 0.022).
 
 
 ## Conclusiones
 
-- resumen de los resultados
+Al comparar ambos modelos, es posible observar que el modelo logístico tiene un mejor ajuste que el modelo lineal. Por otro lado, en todos los modelos, tanto lineales como logísticos, el efecto del género es significativo y negativo en las preferencias por justicia de mercado en la eduación. Lo mismo ocurre con el efecto de interacción del estatus social subjetivo con la percepción de talento en la sociedad. 
 
-- discusión y respuesta a la pregunta de investigación 
-H1,2,3 y 4
+De acuerdo a nuestras hipótesis, lo primero es que se observa que efectivamente las mujeres prefieren en menor medida la justicia de mercado en la educación (H4). Esto nos da una primera pista del comportamiento del género dentro de las preferencias sociales de acuerdo a valores de mercado y funcionamiento de las políticas sociales. Considerando aquello, es que sería interesante profundizar en la dirección de lo planteado por @mengel_preferences_2023 y así estimar estos efectos en variables que midan de forma más pertinente el apoyo a políticas redistributivas.   
 
-- límites del diseño
+Para el caso de las percepciones de meritocracia (H1), estas mantienen su significancia en las regresiones simples, pero la pierden  al controlar por otras variables. Aquello permite discutir que el efecto de las percepciones meritocraticas en las preferencias por justicia de mercado en la educación se explica por otras variables y que no es un efecto aislado. Lo anterior, queda más o menos en evidencia cuando las percepciones de meritocracia interactuan con el estatus social subjetivo. Es posible estimar el efecto de la percepción sobre el criterio del talento considernando su interacción con el estatus social subjetivo, donde una menor adhesión con dicha idea y que poseen un estatus social subjetivo más alto prefieren en menor medida la justicia de mercado en la educación. De este modo, se puede profundizar en que el efecto de las creencias que legitiman la desigualdad planteado por @garcia-sanchez_creencias_2022, se evidencia cuando se trata de la meritocracia asociada a la intelegencia y habilidad. Así, esto indica que la H2 se cumple de forma parcial, dado que cuando se interactua con el criterio del esfuerzo, el efecto no se sostiene. 
 
-- posibles ejes de investigación 
+Por último, en el caso de H3, correspondiente a la hipótesis sobre el ingreso total del hogar, no se sostiene, ya que, si bien el efecto responde a la direccionalidad propuesta, este no es significativo. 
 
+Una de las limitaciones de este trabajo es el ajuste de los modelos, los cuales indican que la elección de las variables no estaría logrando explicar la varianza de las preferencias por justicia de mercado. Por otro lado, otra limitación es el tratamiento de la variable dependiente, la cual puede tratarse como una variable cuantitativa en la práctica, pero al ser de naturaleza ordinal correspondería la utilización de un modelo para variables de dicho nivel de medición. 
+
+Finalmente, en base a los resultados expuestos, futuros estudios pueden ahondar en investigaciones longitudinales como la realizada por @castillo_changes_2025. Además, al estudiar un aspecto de las creencias normativas sobre la justicia de mercado, seria interesante ver la forma en que influyen las creencias normativas sobre la meritocracia en dichos valores de mercado. Por último, considernado el efecto significativo del género, y que, por ende, las mujeres no estan de acuerdo con la justicia de mercado en la educación aun controlando por las percepciones meritocráticas y su estatus percibido en la sociedad, es que otras investigaciones podrían ahondar en el efecto de predictores asociados con la desigualdad de género en las preferencias de justicia de mercado. 
+
+<br>  
+<br>
+
+## Referencias
