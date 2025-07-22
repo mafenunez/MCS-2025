@@ -99,7 +99,7 @@ proc_data_log %>%
 
 ```
 
-Además, se reocdifico en dos cateogrias la variable dependiente, para ver sus resultados utilizando regresión logisitca. Donde 0 es "En desacuerdo" y 1 es "De acuerdo". Dentro de la recodificación, se considero como NA la cateogoría "Ni de acuerdo ni en desacuerdo", lo cual conlleva la perdida de 228 casos, contando con una segunda base con un N de 2238 casos. 
+Además, esta se reocdificó en dos cateogrías, para ver sus resultados utilizando regresión logística. Donde 0 es "En desacuerdo" y 1 es "De acuerdo". Dentro de la recodificación, se considero como NA la cateogoría "Ni de acuerdo ni en desacuerdo", lo cual conlleva la pérdida de 228 casos, contando con una segunda base con un N de 2238 casos. 
 
 ### Variables independientes
 
@@ -160,10 +160,10 @@ sjPlot::tab_corr(matriz,
                  triangle = "lower")
 ```
 
-En general, se observa que las correlaciones entre las variables indepedientes son de intensidad baja y significativas (expecto en el caso de los criterios de meritocracia). 
+En general, se observa que las correlaciones entre las variables indepedientes son de intensidad baja (expecto en el caso de los criterios de meritocracia) y significativas. Solo en el caso de la variable de ingreso total de los hogares no se asocia significativamente con la variable dependiente. 
 
 
-Ahora, veremos como se relaciona cada variable predictora con las preferencias por justicia de mercado en la eduación de acuerdo a sus niveles de medición. 
+Ahora, veremos cómo se relaciona cada variable predictora con las preferencias por justicia de mercado en la eduación de acuerdo a sus niveles de medición. 
 
 
 ### a. Tabla de contingencia: Justicia de mercado en la educación y género
@@ -241,9 +241,9 @@ cor.test(matriz$just_educacion, matriz$talento, method = "spearman")
 0.13^2*100
 ```
 
-La correlación policorica indica un relación --, de modo que a mayor preferencia por justicia de mercado mayor ---. Esta relación  es significativa (p-value = ) y comparten el -- varianza.
+La correlación policórica para la variable del criterio meritocrático del esfuerzo indica un relación baja y positiva, de modo que a mayor preferencia por justicia de mercado mayor percepción de que las personas son recompensadas por su esfuerzo en la soceidad. Esta relación es significativa (p-value = 0.000 ) y comparten un 2.25% de varianza.
 
-La correlación policorica indica un relación --, de modo que a mayor preferencia por justicia de mercado mayor ---. Esta relación  es significativa (p-value = ) y comparten el -- varianza.
+La correlación policórica para la variable del criterio meritocrático del talento indica un relación baja y positiva, de modo que a mayor preferencia por justicia de mercado mayor percepción de que las personas son recompensadas por su inteligencia y habilidad. Esta relación es significativa (p-value = 0.000) y comparten un 1.69% varianza.
 
 ### c. Correlaciones de Pearson: Justicia de mercado en la educación y estatus social subjetivo e ingreso total de los hogares
 
@@ -263,10 +263,10 @@ p <- proc_data %>% select(just_educacion, estatus_subj) %>% mutate_all(~(as.nume
 
 cor.test(p$just_educacion, p$estatus_subj, method = "pearson")
 
-0.0007^2*100
+0.04^2*100
 ```
 
-La correlación de Pearson indica un relación baja y positiva, de modo que a mayor preferencia por justicia de mercado perciben tener un mayor estatus en la sociedad chilena. Sin embargo esta relación no es significativa (p-value = 0.9) y comparten muy baja varianza (0.000049%).
+La correlación de Pearson para la variable de estatus social subjetivo indica un relación baja y positiva, de modo que a mayor preferencia por justicia de mercado perciben tener un mayor estatus en la sociedad chilena. Esta relación es significativa (p-value = 0.04) y comparten baja varianza (0.16%).
 
 
 ```{r}
@@ -279,11 +279,10 @@ cor.test(p$just_educacion, p$ingreso_hogar, method = "pearson")
 
 0.02^2
 
-0.0004*100
+0.006^2*100
 ```
 
-La correlación de Pearson indica un relación baja y positiva, de modo que a mayor preferencia por justicia de mercado presentan un mayor monto total a nivel de su hogar. Sin embargo esta relación no es significativa (p-value = 0.1) y comparten muy baja varianza (0.04%).
-
+La correlación de Pearson para la variable de ingreso total del hogar indica un relación baja y negativa, de modo que a mayor preferencia por justicia de mercado presentan un menor monto total a nivel de su hogar. Sin embargo esta relación no es significativa (p-value = 0.7) y comparten muy baja varianza (0.0036%).
 
 
 ## Regresión lineal
@@ -325,97 +324,8 @@ texreg::texreg(list(fit01,fit02,fit03,fit04, fit05), float.pos = "H")
 
 ```
 
-INTERPRETACION
+Considerando el efecto de cada variable sin controlar por el resto de las variables, se observa que las variables mantienen su efecto, de modo que estas son significativas (excepto el ingreso total de los hogares).  
 
-### Valores predichos: Género
-
-
-```{r}
-#| echo: false
-
-pred <- ggeffects::ggpredict(fit01, terms = c("genero"))
-
-ggeffects::ggpredict(fit01, terms = c("genero")) %>%
-  ggplot(aes(x=x, y=predicted)) +
-  geom_bar(stat="identity", color="grey", fill="grey")+
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
-  labs(title="Género", x = "", y = "") +
-  theme_bw() +
-  #scale_x_continuous(name = "",
-                 #    breaks = c(0,1),
-                  #   labels = c("Hombre", "Mujer"))+
-  scale_y_continuous(limits = c(0,16), 
-                     breaks = seq(0,16, by = 1))
-```
-
-INTERPRETACION
-
-### Valores predichos: Estatus social subjetivo
-
-```{r}
-#| echo: false
-
-#valores predichos variable cuanti 
-ggeffects::ggpredict(fit03, terms="estatus_subj") %>%
-  ggplot(mapping=aes(x = x, y=predicted)) +
-  labs(title="Estatus Social Subjetivo", x = "", y = "")+
-  theme_bw() +
- geom_smooth()+
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
-  scale_x_continuous(breaks = seq(0,100, by = 10))+
-  scale_y_continuous(limits = c(0,16), 
-                     breaks = seq(0,16, by = 1))
-```
-
-INTERPRETACION
-
-### Valores predichos: Esfuerzo 
-
-```{r}
-#| echo: false
-
-pred <- ggeffects::ggpredict(fit04, terms = c("esfuerzo"))
-
-
-ggeffects::ggpredict(fit04, terms = c("esfuerzo")) %>%
-  ggplot(aes(x=x, y=predicted)) +
-  geom_bar(stat="identity", color="grey", fill="grey")+
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
-  labs(title="Esfuerzo", x = "", y = "") +
-  theme_bw() +
- # scale_x_continuous(name = "",
-  #                   breaks = c(0,1)) +
-                     #labels = c("Hombre", "Mujer"))+
-  scale_y_continuous(limits = c(0,16), 
-                     breaks = seq(0,16, by = 1))  +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-INTERPRETACION
-
-### Valores predichos: Talento
-
-```{r}
-#| echo: false
-
-pred <- ggeffects::ggpredict(fit05, terms = c("talento"))
-
-
-ggeffects::ggpredict(fit05, terms = c("talento")) %>%
-  ggplot(aes(x=x, y=predicted)) +
-  geom_bar(stat="identity", color="grey", fill="grey")+
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
-  labs(title="Talento", x = "", y = "") +
-  theme_bw() +
- # scale_x_continuous(name = "",
-  #                   breaks = c(0,1)) +
-                     #labels = c("Hombre", "Mujer"))+
-  scale_y_continuous(limits = c(0,16), 
-                     breaks = seq(0,16, by = 1))  +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-INTERPRETACION
 
 ### Modelos multivariados
 
@@ -434,24 +344,113 @@ texreg::texreg(list(fit06,fit07,fit08, fit09),
 INTERPRETACION
 R2
 
+### Valores predichos: Género
+
+
+```{r}
+#| echo: false
+
+pred <- ggeffects::ggpredict(fit09, terms = c("genero"))
+
+ggeffects::ggpredict(fit09, terms = c("genero")) %>%
+  ggplot(aes(x=x, y=predicted)) +
+  geom_bar(stat="identity", color="grey", fill="grey")+
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
+  labs(title="Género", x = "", y = "") +
+  theme_bw() +
+  #scale_x_continuous(name = "",
+                 #    breaks = c(0,1),
+                  #   labels = c("Hombre", "Mujer"))+
+  scale_y_continuous(limits = c(0,5), 
+                     breaks = seq(0,16, by = 1))
+```
+
+Se observan diferencias por g
+
+
+INTERPRETACION
+
+### Valores predichos: Esfuerzo 
+
+```{r}
+#| echo: false
+
+pred <- ggeffects::ggpredict(fit09, terms = c("esfuerzo"))
+
+
+ggeffects::ggpredict(fit09, terms = c("esfuerzo")) %>%
+  ggplot(aes(x=x, y=predicted)) +
+  geom_bar(stat="identity", color="grey", fill="grey")+
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
+  labs(title="Esfuerzo", x = "", y = "") +
+  theme_bw() +
+ # scale_x_continuous(name = "",
+  #                   breaks = c(0,1)) +
+                     #labels = c("Hombre", "Mujer"))+
+  scale_y_continuous(limits = c(0,5), 
+                     breaks = seq(0,16, by = 1))  +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+INTERPRETACION
+
+### Valores predichos: Talento
+
+```{r}
+#| echo: false
+
+pred <- ggeffects::ggpredict(fit09, terms = c("talento"))
+
+
+ggeffects::ggpredict(fit09, terms = c("talento")) %>%
+  ggplot(aes(x=x, y=predicted)) +
+  geom_bar(stat="identity", color="grey", fill="grey")+
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
+  labs(title="Talento", x = "", y = "") +
+  theme_bw() +
+ # scale_x_continuous(name = "",
+  #                   breaks = c(0,1)) +
+                     #labels = c("Hombre", "Mujer"))+
+  scale_y_continuous(limits = c(0,5), 
+                     breaks = seq(0,16, by = 1))  +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+INTERPRETACION
+
 
 ### Efectos de interacción
 
 
 ```{r}
 #| echo: false
+#| results: asis
 fit10<- lm(just_educacion~genero+ingreso_hogar+estatus_subj*esfuerzo+talento,data=proc_data_lm)
-sjPlot::tab_model(fit09,fit10, show.ci = FALSE)
+texreg::texreg(list(fit09,fit10),
+          custom.model.names = c("M9","M10"),
+          digits = 3, 
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
+
+#sjPlot::tab_model(fit09,fit10, show.ci = FALSE)
 
 
 ```
 
 INTERPRETACION
 
+
+
 ```{r}
 #| echo: false
+#| results: asis
 fit11<- lm(just_educacion~genero+ingreso_hogar+estatus_subj*talento+esfuerzo,data=proc_data_lm)
-sjPlot::tab_model(fit09,fit11, show.ci = FALSE)
+texreg::texreg(list(fit09,fit11),
+          custom.model.names = c("M9","M11"),
+          digits = 3, 
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
+
+
+#sjPlot::tab_model(fit09,fit11, show.ci = FALSE)
 
 sjPlot::plot_model(fit11, type = "int") +
   theme_bw() +
@@ -560,7 +559,7 @@ INTERPETAACION
 ```{r}
 #| echo: false
 
-FigSind_1_Prob <- ggeffects::ggpredict(m3log, terms = c("genero")) %>%
+FigSind_1_Prob <- ggeffects::ggpredict(m4log, terms = c("genero")) %>%
   ggplot(aes(x=x, y=predicted)) +
   geom_bar(stat="identity", color="grey", fill="grey")+
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
