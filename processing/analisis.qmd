@@ -1,8 +1,10 @@
 ---
 title: "Justicia de mercado en la eduación: un estudio de las preferencias distributivas en Chile"
 author: María Fernanda Núñez y Tomás Urzúa
-bibliography: "../input/bib/bib-metodos.bib"
-format: pdf
+bibliography: "../input/bib/metodos-final.bib"
+format: 
+ pdf: 
+  include-in-header: preamble.tex
 editor: visual
 lang: es
 ---
@@ -40,7 +42,7 @@ Por otro lado, en tanto indicador objetivo, según @weisstanner_redistributive_2
 
 H3: La personas que poseen una menor ingresos en sus hogares prefieren en menor medida la justificia de mercado en la eduación.
 
-Por último, @sen_gender_1995 enfatiza en la consideración de las desigualdades de género en el estudio de la justicia, indicando la complejidad de dicho asunto al ser legitimación incluso desde las mismas mujeres. Así, @mengel_preferences_2023 indican que se puede encontrar una tendencia similar en la bibliografía sobre las actitudes de género hacia las políticas redistributivas, siendo la demanda de redistribución de las mujeres mayor en conjunto.
+Por último, @nussbaum_gender_2025 enfatizan en la consideración de las desigualdades de género en el estudio de la justicia, indicando la complejidad de dicho asunto al ser legitimación incluso desde las mismas mujeres. Así, @mengel_preferences_2023 indican que se puede encontrar una tendencia similar en la bibliografía sobre las actitudes de género hacia las políticas redistributivas, siendo la demanda de redistribución de las mujeres mayor en conjunto.
 
 H4: Las mujeres preferirían en menor medida la justicia de mercado en la educación. 
 
@@ -67,7 +69,37 @@ proc_data %>%
   knitr::kable(caption = "Frecuencia Preferencia de justicia de mercado en la educación")
 ```
 
-Esta variable ordinal busca medir el grado de acuerdo de una persona sobre la sentencia "Es justo que las personas de altos ingresos tengan una mejor educación para sus hijos que las personas con ingresos más bajos". La escala de acuerdo contiene cinco categorías de respuesta, las cuales van desde "Totalmente en desacuerdo" (1) hasta "Totalmente de acuerdo" (5). Se realizo el tratamiento de NA...
+Esta variable ordinal busca medir el grado de acuerdo de una persona sobre la sentencia "Es justo que las personas de altos ingresos tengan una mejor educación para sus hijos que las personas con ingresos más bajos". La escala de acuerdo contiene cinco categorías de respuesta, las cuales van desde "Totalmente en desacuerdo" (1) hasta "Totalmente de acuerdo" (5). 
+
+```{r}
+#| echo: false
+
+proc_data_log <- proc_data %>%
+  mutate(just_educacion_recod = car::recode(just_educacion,
+    "'Totalmente en desacuerdo' = 'En desacuerdo';
+     'Totalmente de acuerdo' = 'De acuerdo';
+     'Ni de acuerdo ni en desacuerdo' = NA"
+  )) 
+
+proc_data_log <- proc_data_log %>%
+  mutate(just_educacion_recod = case_when(
+    just_educacion_recod == "En desacuerdo" ~ 0,
+    just_educacion_recod == "De acuerdo" ~ 1,
+    TRUE ~ NA_real_
+  ))
+
+proc_data_log <- proc_data_log %>%
+  mutate(just_educacion_recod = labelled(just_educacion_recod, labels = c("En desacuerdo" = 0, "De acuerdo" = 1)))
+
+proc_data_log %>% 
+  mutate(just_educacion_recod = as_factor(just_educacion_recod)) %>%
+  count(just_educacion_recod) %>% rename("Preferencia por justicia de mercado en la educación (recodificada)" = just_educacion_recod) %>%
+  mutate("%" = round(n / sum(n) * 100, 1)) %>%
+  knitr::kable(caption = "Frecuencia Preferencia de justicia de mercado en la educación (recodificada)")
+
+```
+
+Además, se reocdifico en dos cateogrias la variable dependiente, para ver sus resultados utilizando regresión logisitca. Donde 0 es "En desacuerdo" y 1 es "De acuerdo". Dentro de la recodificación, se considero como NA la cateogoría "Ni de acuerdo ni en desacuerdo", lo cual conlleva la perdida de 228 casos, contando con una segunda base con un N de 2238 casos. 
 
 ### Variables independientes
 
@@ -128,10 +160,10 @@ sjPlot::tab_corr(matriz,
                  triangle = "lower")
 ```
 
-En general, podemos....
+En general, se observa que las correlaciones entre las variables indepedientes son de intensidad baja y significativas (expecto en el caso de los criterios de meritocracia). 
 
 
-Ahora, veremos como se relaciona cada variable predictoras con las preferencias por justicia de mercado en la eduación de acuerdo a sus niveles de medición. 
+Ahora, veremos como se relaciona cada variable predictora con las preferencias por justicia de mercado en la eduación de acuerdo a sus niveles de medición. 
 
 
 ### a. Tabla de contingencia: Justicia de mercado en la educación y género
@@ -267,7 +299,11 @@ plot_stackfrq(proc_data[, "just_educacion"]) + theme(legend.position="bottom") +
 
 ```{r}
 #| echo: false
-proc_data_lm <- proc_data %>% mutate_all(~(as.numeric(.))) 
+#proc_data_lm <- proc_data %>% mutate_all(~(as.numeric(.)))
+
+proc_data$just_educacion <- as.numeric(proc_data$just_educacion)
+
+proc_data_lm <- proc_data
 ```
 
 ### Modelos simples
@@ -280,37 +316,24 @@ fit04<- lm(just_educacion~esfuerzo,data=proc_data_lm)
 fit05<- lm(just_educacion~talento,data=proc_data_lm)
 ```
 
-```{r}
-#| echo: false
-labs01 <- c("Intercepto","Género",
-            "Ingreso Total Hogar","Estatus Social Subjetivo","Cercanía Escuelas")
-```
 
 ```{r}
 #| echo: false
 #| results: asis
 
-texreg::texreg(list(fit01,fit02,fit03,fit04),custom.coef.names = labs01)
+texreg::texreg(list(fit01,fit02,fit03,fit04, fit05), float.pos = "H")
+
 ```
 
+INTERPRETACION
 
 ### Valores predichos: Género
 
+
 ```{r}
 #| echo: false
-#| results: asis
-
-texreg::texreg(list(fit01), 
-       custom.model.names = c("Modelo 1"),
-        custom.coef.names = c("Intercepto",
-                              "Género (mujer=1)"))
-```
-
-```{r}
-#|echo: false
 
 pred <- ggeffects::ggpredict(fit01, terms = c("genero"))
-print(names(pred))
 
 ggeffects::ggpredict(fit01, terms = c("genero")) %>%
   ggplot(aes(x=x, y=predicted)) +
@@ -318,28 +341,14 @@ ggeffects::ggpredict(fit01, terms = c("genero")) %>%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
   labs(title="Género", x = "", y = "") +
   theme_bw() +
-  scale_x_continuous(name = "",
-                     breaks = c(0,1),
-                     labels = c("Hombre", "Mujer"))+
+  #scale_x_continuous(name = "",
+                 #    breaks = c(0,1),
+                  #   labels = c("Hombre", "Mujer"))+
   scale_y_continuous(limits = c(0,16), 
                      breaks = seq(0,16, by = 1))
 ```
 
-### Valores predichos: Ingreso
-```{r}
-#| echo: false
-
-#valores predichos variable cuanti 
-ggeffects::ggpredict(fit02, terms="ingreso_hogar") %>%
-  ggplot(mapping=aes(x = x, y=predicted)) +
-  labs(title="Ingreso Hogar", x = "", y = "")+
-  theme_bw() +
- geom_smooth()+
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
-  scale_x_continuous(breaks = seq(0,100, by = 10))+
-  scale_y_continuous(limits = c(0,16), 
-                     breaks = seq(0,16, by = 1))
-```
+INTERPRETACION
 
 ### Valores predichos: Estatus social subjetivo
 
@@ -358,25 +367,15 @@ ggeffects::ggpredict(fit03, terms="estatus_subj") %>%
                      breaks = seq(0,16, by = 1))
 ```
 
+INTERPRETACION
+
 ### Valores predichos: Esfuerzo 
 
 ```{r}
 #| echo: false
 
-#valores predichos variable cuanti 
-ggeffects::ggpredict(fit04, terms="esfuerzo") %>%
-  ggplot(mapping=aes(x = x, y=predicted)) +
-  labs(title="Esfuerzo", x = "", y = "")+
-  theme_bw() +
- geom_smooth()+
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
-  scale_x_continuous(breaks = seq(0,100, by = 10))+
-  scale_y_continuous(limits = c(0,16), 
-                     breaks = seq(0,16, by = 1))
-
-
 pred <- ggeffects::ggpredict(fit04, terms = c("esfuerzo"))
-print(names(pred))
+
 
 ggeffects::ggpredict(fit04, terms = c("esfuerzo")) %>%
   ggplot(aes(x=x, y=predicted)) +
@@ -384,29 +383,39 @@ ggeffects::ggpredict(fit04, terms = c("esfuerzo")) %>%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
   labs(title="Esfuerzo", x = "", y = "") +
   theme_bw() +
-  scale_x_continuous(name = "",
-                     breaks = c(0,1)) +
+ # scale_x_continuous(name = "",
+  #                   breaks = c(0,1)) +
                      #labels = c("Hombre", "Mujer"))+
   scale_y_continuous(limits = c(0,16), 
-                     breaks = seq(0,16, by = 1))
+                     breaks = seq(0,16, by = 1))  +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+INTERPRETACION
 
 ### Valores predichos: Talento
 
 ```{r}
 #| echo: false
 
-#valores predichos variable cuanti 
-ggeffects::ggpredict(fit05, terms="talento") %>%
-  ggplot(mapping=aes(x = x, y=predicted)) +
-  labs(title="Talento", x = "", y = "")+
+pred <- ggeffects::ggpredict(fit05, terms = c("talento"))
+
+
+ggeffects::ggpredict(fit05, terms = c("talento")) %>%
+  ggplot(aes(x=x, y=predicted)) +
+  geom_bar(stat="identity", color="grey", fill="grey")+
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width=.1) +
+  labs(title="Talento", x = "", y = "") +
   theme_bw() +
- geom_smooth()+
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2, fill = "black") +
-  scale_x_continuous(breaks = seq(0,100, by = 10))+
+ # scale_x_continuous(name = "",
+  #                   breaks = c(0,1)) +
+                     #labels = c("Hombre", "Mujer"))+
   scale_y_continuous(limits = c(0,16), 
-                     breaks = seq(0,16, by = 1))
+                     breaks = seq(0,16, by = 1))  +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+INTERPRETACION
 
 ### Modelos multivariados
 
@@ -419,10 +428,11 @@ fit08<- lm(just_educacion~genero+ingreso_hogar+estatus_subj + esfuerzo,data=proc
 fit09<- lm(just_educacion~genero+ingreso_hogar+estatus_subj + esfuerzo + talento,data=proc_data_lm)
 
 texreg::texreg(list(fit06,fit07,fit08, fit09),
-        custom.model.names = c("Modelo 1","Modelo 2","Modelo 3", "Modelo 4"))
+        custom.model.names = c("Modelo 1","Modelo 2","Modelo 3", "Modelo 4"), float.pos = "H")
 ```
 
-
+INTERPRETACION
+R2
 
 
 ### Efectos de interacción
@@ -433,59 +443,34 @@ texreg::texreg(list(fit06,fit07,fit08, fit09),
 fit10<- lm(just_educacion~genero+ingreso_hogar+estatus_subj*esfuerzo+talento,data=proc_data_lm)
 sjPlot::tab_model(fit09,fit10, show.ci = FALSE)
 
+
+```
+
+INTERPRETACION
+
+```{r}
+#| echo: false
 fit11<- lm(just_educacion~genero+ingreso_hogar+estatus_subj*talento+esfuerzo,data=proc_data_lm)
 sjPlot::tab_model(fit09,fit11, show.ci = FALSE)
 
-```
-
-```{r}
-#| echo: false
-sjPlot::plot_model(fit10, type = "int") +
-  theme_bw() +
-  theme(legend.position = "bottom")
-```
-
-```{r}
-#| echo: false
 sjPlot::plot_model(fit11, type = "int") +
   theme_bw() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "right")
 ```
+
+INTERPRETACIÓN
+
 
 ## Regresión logística
 
 
 ### Variable dependiente
 
-```{r}
-#| echo: false
-
-proc_data <- proc_data %>%
-  mutate(just_educacion_recod = car::recode(just_educacion,
-    "'Totalmente en desacuerdo' = 'En desacuerdo';
-     'Totalmente de acuerdo' = 'De acuerdo';
-     'Ni de acuerdo ni en desacuerdo' = NA"
-  )) 
-
-proc_data <- proc_data %>%
-  mutate(just_educacion_recod = case_when(
-    just_educacion_recod == "En desacuerdo" ~ 0,
-    just_educacion_recod == "De acuerdo" ~ 1,
-    TRUE ~ NA_real_
-  ))
-
-proc_data <- proc_data %>%
-  mutate(just_educacion_recod = labelled(just_educacion_recod, labels = c("En desacuerdo" = 0, "De acuerdo" = 1)))
-
-proc_data$just_educacion_recod <- as.factor(proc_data$just_educacion_recod)
-
-```
-Con la recodificación se pierden 228 casos correspondientes a la cateogría "Ni de acuerdo ni en desacuerdo"...
 
 ```{r}
 #| echo: false
 
-sjPlot::plot_stackfrq(proc_data$just_educacion_recod) +
+sjPlot::plot_stackfrq(proc_data_log$just_educacion_recod) +
   theme(legend.position = "bottom") +
   labs(title = "Preferencias por justicia a la educación dicotómica")
 
@@ -496,20 +481,33 @@ sjPlot::plot_stackfrq(proc_data$just_educacion_recod) +
 
 ```{r}
 #| echo: false
-m01<- glm(just_educacion_recod~genero,data=proc_data, family = "binomial"(link = "logit"))
-m02<- glm(just_educacion_recod~ingreso_hogar,data=proc_data, family = "binomial"(link = "logit"))
-m03<- glm(just_educacion_recod~estatus_subj,data=proc_data, family = "binomial"(link = "logit"))
-m04<- glm(just_educacion_recod~esfuerzo,data=proc_data, family = "binomial"(link = "logit"))
-m05<- glm(just_educacion_recod~talento,data=proc_data, family = "binomial"(link = "logit"))
+#| results: asis
+m01<- glm(just_educacion_recod~genero,data=proc_data_log, family = "binomial"(link = "logit"))
+m02<- glm(just_educacion_recod~ingreso_hogar,data=proc_data_log, family = "binomial"(link = "logit"))
+m03<- glm(just_educacion_recod~estatus_subj,data=proc_data_log, family = "binomial"(link = "logit"))
+m04<- glm(just_educacion_recod~esfuerzo,data=proc_data_log, family = "binomial"(link = "logit"))
+m05<- glm(just_educacion_recod~talento,data=proc_data_log, family = "binomial"(link = "logit"))
+
+
+texreg::texreg(list(m01,m02,m03,m04,m05),
+          custom.model.names = c("M1","M2 ","M3", "M4", "M5"),
+          digits = 3, 
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
 ```
 
+INTERPRETACION
 
 ### Modelos multivariados
 
 ```{r}
-proc_data <- proc_data %>% mutate_all(~(as.numeric(.)))
+#| echo: false
+#proc_data <- proc_data %>% mutate_all(~(as.numeric(.)))
 
-proc_data <- proc_data %>%
+proc_data_log$just_educacion_recod <- as.factor(proc_data_log$just_educacion_recod)
+
+proc_data_log$just_educacion_recod <- as.numeric(proc_data_log$just_educacion_recod)
+
+proc_data_log <- proc_data_log %>%
   mutate(just_educacion_recod = car::recode(just_educacion_recod,
     "1 = 0;
      2 = 1"
@@ -521,17 +519,19 @@ proc_data <- proc_data %>%
 #| echo: false
 #| results: asis
 
-m1log <- glm(just_educacion_recod~ genero + ingreso_hogar, data = proc_data, family = "binomial"(link = "logit"))
-m2log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj, data = proc_data,family = "binomial")
-m3log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj + esfuerzo, data = proc_data, family = "binomial")
-m4log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj + esfuerzo + talento, data = proc_data, family = "binomial")
+m1log <- glm(just_educacion_recod~ genero + ingreso_hogar, data = proc_data_log, family = "binomial"(link = "logit"))
+m2log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj, data = proc_data_log,family = "binomial")
+m3log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj + esfuerzo, data = proc_data_log, family = "binomial")
+m4log <- glm(just_educacion_recod~ genero + ingreso_hogar + estatus_subj + esfuerzo + talento, data = proc_data_log, family = "binomial")
 
 texreg::texreg(list(m1log,m2log,m3log,m4log),
-          custom.model.names = c("M1 (log odds)","M2 (log odds)","M3 (log odds)", "M3 (log odds)"),
+          custom.model.names = c("M1 (log odds)","M2 (log odds)","M3 (log odds)", "M4 (log odds)"),
           digits = 3, 
-          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†")
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
 
 ```
+
+INTERPRETACION
 
 ### Estimación de odds ratios
 
@@ -550,9 +550,10 @@ texreg::texreg(list(m1log,m2log,m3log,m4log),
           override.coef = list(m1log_OR,m2log_OR,m3log_OR,m4log_OR), # Sobreescribir coeficientes
           custom.model.names = c("m1 (OR)","m2 (OR)","m3 (OR)", "m4 (OR)"),
           digits = 3, 
-          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†")
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
 ```
 
+INTERPETAACION
 
 ### Probabilidades predichas
 
@@ -568,9 +569,9 @@ FigSind_1_Prob <- ggeffects::ggpredict(m3log, terms = c("genero")) %>%
   theme(plot.title = element_text(size = 12), 
         axis.text.x = element_text(angle = 0, vjust = 0.5, size = 12),
         axis.text.y = element_text(vjust = 0.5, size = 10)) +
-  scale_x_continuous(name = "",
-                     breaks = c(0,1),
-                     labels = c("Hombre", " Mujer")) +
+  #scale_x_continuous(name = "",
+                #     breaks = c(0,1),
+                 #    labels = c("Hombre", " Mujer")) +
   scale_y_continuous(limits = c(0,0.35), 
                      breaks = seq(0,0.35, by = 0.05),
                      labels = scales::percent_format(accuracy = 1L))
@@ -578,11 +579,7 @@ FigSind_1_Prob <- ggeffects::ggpredict(m3log, terms = c("genero")) %>%
 FigSind_1_Prob
 ```
 
-```{r}
-#| echo: false
-
-       
-```
+INTERPRETACION
 
 ### Bondad de ajuste
 
@@ -592,112 +589,99 @@ FigSind_1_Prob
 
 #anova
 
-anova(m1log, m2log, test = "Chisq")
+#anova(m1log, m2log, test = "Chisq")
 
 #likelihood ratio
 
-lrtest(m1log, m2log)
+#lrtest(m1log, m2log)
 
 #pseudo R2
 
 m1log_R2<-DescTools::PseudoR2(m1log)
 m2log_R2<-DescTools::PseudoR2(m2log)
 m3log_R2<-DescTools::PseudoR2(m3log)
+m4log_R2<-DescTools::PseudoR2(m4log)
 
 #Misma tabla, en log odds, con Pseudo R2
-texreg::texreg(list(m1log,m2log,m3log),
-          custom.model.names = c("m1 (log odds)","m2 (log odds)","m3 (log odds)"),
-          custom.gof.rows=list("Pseudo R2" = c(m1log_R2, m2log_R2,m3log_R2)),
+texreg::texreg(list(m1log,m2log,m3log,m4log),
+          custom.model.names = c("m1 (log odds)","m2 (log odds)","m3 (log odds)", "m4 (log odds)"),
+          custom.gof.rows=list("Pseudo R2" = c(m1log_R2, m2log_R2,m3log_R2, m4log_R2)),
           digits = 3, 
-          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†")
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
 ```
+
+INTERPRETACION
 
 ### Efectos de interacción
 
-variables de meritocracia con estatus social subjetivo
 
 ```{r}
 #| echo: false
 #| results: asis
 
-m3.1log <- glm(just_educacion_recod~genero+ingreso_hogar+estatus_subj*esfuerzo+talento,data=proc_data,family = "binomial")
+m3.1log <- glm(just_educacion_recod~genero+ingreso_hogar+estatus_subj*esfuerzo+talento,data=proc_data_log,family = "binomial")
 
-m3.2log <- glm(just_educacion_recod~genero+ingreso_hogar+estatus_subj*talento+esfuerzo,data=proc_data,family = "binomial")
-```
-
-```{r}
-htmlreg(list(m1log,m2log,m3log,m3.1log),
-          custom.model.names = c("M1 (log odds)","M2 (log odds)","M3 (log odds)",
-                                 "M3.1 (log odds)"),
-          digits = 3, 
-          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†")
-```
-
-```{r}
-htmlreg(list(m1log,m2log,m3log,m3.2log),
-          custom.model.names = c("M1 (log odds)","M2 (log odds)","M3 (log odds)",
-                                 "M3.2 (log odds)"),
-          digits = 3, 
-          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†")
+m3.2log <- glm(just_educacion_recod~genero+ingreso_hogar+estatus_subj*talento+esfuerzo,data=proc_data_log,family = "binomial")
 ```
 
 ```{r}
 #| echo: false
-
-#grafico de probablidades predichas
-# ojo que la relación sindicalización x sector privado no es significativa
-FigSindSector_int<-ggeffects::ggpredict(m3.1log, terms = c("estatus_subj", "esfuerzo")) %>%
-  ggplot(aes(x=x, y=predicted, shape = group, color = group)) +
-  geom_line(aes(group=group,linetype = group),position = position_dodge(.1)) + 
-  geom_point(size = 2.5,position = position_dodge(.1))+
-  scale_x_continuous(name = "", breaks=c(0,1), labels = c("No sindicalizados/as", "Sindicalizados/as")) + 
-  scale_shape_discrete(name = "Sector de empleo",
-                       limits = c("0", "1"),
-                       labels = c("Público", "Privado")) +
-  scale_color_manual(name = "Sector de empleo",
-                     limits = c("0", "1"),
-                     labels = c("Público", "Privado"),
-                     values = c("black", "black")) +
-  scale_linetype_manual(name = "Sector de empleo",
-                        limits = c("0", "1"),
-                        labels = c("Público", "Privado"),
-                        values = c("solid", "dashed")) +
-  scale_y_continuous(limits = c(0,0.40), breaks=seq(0,0.40, by = 0.05),
-                     labels = scales::percent_format(accuracy = 1L)) +
-  theme_bw() +
-  labs(title="", y = "") + 
-  theme(plot.title = element_text(size = 11),
-        axis.text=element_text(size=11))
-
-FigSindSector_int
+#| results: asis
+texreg(list(m3log,m3.1log),
+          custom.model.names = c("M3 (log odds)",
+                                 "M3.1 (log odds)"),
+          digits = 3, 
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
 ```
+
+INTERPRETACION
 
 ```{r}
+#| echo: false
+#| results: asis
+texreg(list(m3log,m3.2log),
+          custom.model.names = c("M3 (log odds)",
+                                 "M3.2 (log odds)"),
+          digits = 3, 
+          stars = c(0.001, 0.01, 0.05, 0.1),symbol = "†", float.pos = "H")
+```
+
+
+```{r}
+#| echo: false
+#| warning: false
+
 # ojo que la relación sindicalización x sector privado no es significativa
-FigSindSector_int<-ggeffects::ggpredict(m3.2log, terms = c("estatus_Subj", "talento")) %>%
+Fig<-ggeffects::ggpredict(m3.2log, terms = c("estatus_subj", "talento")) %>%
   ggplot(aes(x=x, y=predicted, shape = group, color = group)) +
   geom_line(aes(group=group,linetype = group),position = position_dodge(.1)) + 
-  geom_point(size = 2.5,position = position_dodge(.1))+
-  scale_x_continuous(name = "", breaks=c(0,1), labels = c("No sindicalizados/as", "Sindicalizados/as")) + 
-  scale_shape_discrete(name = "Sector de empleo",
-                       limits = c("0", "1"),
-                       labels = c("Público", "Privado")) +
-  scale_color_manual(name = "Sector de empleo",
-                     limits = c("0", "1"),
-                     labels = c("Público", "Privado"),
-                     values = c("black", "black")) +
-  scale_linetype_manual(name = "Sector de empleo",
-                        limits = c("0", "1"),
-                        labels = c("Público", "Privado"),
-                        values = c("solid", "dashed")) +
+  geom_point(size = 2.5,position = position_dodge(.1)) + 
+  scale_color_discrete(name = "Talento") +   
+  scale_shape_discrete(name = "Talento") +   
+  scale_linetype_discrete(name = "Talento") +
   scale_y_continuous(limits = c(0,0.40), breaks=seq(0,0.40, by = 0.05),
                      labels = scales::percent_format(accuracy = 1L)) +
   theme_bw() +
-  labs(title="", y = "") + 
+  labs(title="Efecto de interacción: Talento y Estatus social subjetivo", x = "Estatus social subjetivo", y = "") + 
   theme(plot.title = element_text(size = 11),
         axis.text=element_text(size=11))
 
-FigSindSector_int
+Fig
+
 ```
 
+
+INTERPRETACION
+
+
 ## Conclusiones
+
+- resumen de los resultados
+
+- discusión y respuesta a la pregunta de investigación 
+H1,2,3 y 4
+
+- límites del diseño
+
+- posibles ejes de investigación 
+
